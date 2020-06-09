@@ -9,7 +9,7 @@
 # Import modules required for app
 import os
 from flask import Flask, render_template, request
-from models import get_photos, insert_photo
+from models import get_photos, insert_photo, upload_photo
 
 # Create a Flask instance
 app = Flask(__name__)
@@ -24,7 +24,12 @@ def home():
 @app.route('/upload', methods=['POST'])
 def upload():
 	insert_photo(request)								# Call function in 'models.py' to process the database transaction
+	upload_photo(request.files['photo'])				# Call function in 'models.py' to upload photo to ECS
 	return render_template('submit-photo.html')			# Return a page to inform the user of a successful upload
+
+@app.route('/photo/<path:photo>')
+def photo(photo):
+    return render_template('photo.html',photo=photo)
 
 ##### Run the Flask instance, browse to http://<< Host IP or URL >>:5000 #####
 if __name__ == "__main__":
